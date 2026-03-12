@@ -549,6 +549,7 @@ void DigitizationRunner::processRootFiles() {
         vector<double> *py_particle = 0;
         vector<double> *pz_particle = 0;
         vector<double> *energyDep_hits = 0;
+        vector<double> *energyDep_hits_NRQF = 0;
         vector<double> *x_hits = 0;
         vector<double> *y_hits = 0;
         vector<double> *z_hits = 0;
@@ -567,6 +568,7 @@ void DigitizationRunner::processRootFiles() {
         }
             
         inputtree->SetBranchAddress("energyDep_hits", &energyDep_hits);
+        inputtree->SetBranchAddress("energyDep_hits_NRQF", &energyDep_hits_NRQF);
         inputtree->SetBranchAddress("x_hits", &x_hits);
         inputtree->SetBranchAddress("y_hits", &y_hits);
         inputtree->SetBranchAddress("z_hits", &z_hits);
@@ -936,7 +938,13 @@ void DigitizationRunner::processRootFiles() {
                 //}
                 
                 // Definition of energy hits
-                vector<double> energy_hits = (*energyDep_hits);
+                vector<double> energy_hits;
+                
+                if (NR_flag) {
+                    energy_hits = (*energyDep_hits_NRQF);
+                } else {
+                    energy_hits = (*energyDep_hits);
+                }
                     
                 // Add random Z to tracks
                 if (config.getDouble("randZ_range") != 0) {
