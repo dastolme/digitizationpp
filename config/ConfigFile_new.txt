@@ -16,6 +16,7 @@
 'GEM1_HV'               : 420.,      # HV of GEM1
 'GEM2_HV'               : 420.,      # HV of GEM2
 'GEM3_HV'               : 420.,      # HV of GEM3
+'GEM_gain_factor'       : 0.03,
 'x_dim'			: 346,       # first dimension of the detector
 'y_dim'			: 346,       # second dimension of the detector
 
