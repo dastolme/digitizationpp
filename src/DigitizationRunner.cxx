@@ -91,9 +91,11 @@ void DigitizationRunner::runPedsOnly() {
 }
 
 void DigitizationRunner::initializeGlobals() {
-    GEM1_gain = 0.03 * exp(0.0209 * config.getDouble("GEM1_HV"));
-    GEM2_gain = 0.03 * exp(0.0209 * config.getDouble("GEM2_HV"));
-    GEM3_gain = 0.03 * exp(0.0209 * config.getDouble("GEM3_HV"));
+    double gain_factor = config.getDouble("GEM_gain_factor");
+    
+    GEM1_gain = gain_factor * exp(0.0209 * config.getDouble("GEM1_HV"));
+    GEM2_gain = gain_factor * exp(0.0209 * config.getDouble("GEM2_HV"));
+    GEM3_gain = gain_factor * exp(0.0209 * config.getDouble("GEM3_HV"));
 
     extraction_eff_GEM1 = 0.87319885 * exp(-0.002 * config.getDouble("GEM1_HV"));
     extraction_eff_GEM2 = 0.87319885 * exp(-0.002 * config.getDouble("GEM2_HV"));
