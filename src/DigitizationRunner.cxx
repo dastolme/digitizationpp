@@ -91,9 +91,11 @@ void DigitizationRunner::runPedsOnly() {
 }
 
 void DigitizationRunner::initializeGlobals() {
-    GEM1_gain = 0.03 * exp(0.0209 * config.getDouble("GEM1_HV"));
-    GEM2_gain = 0.03 * exp(0.0209 * config.getDouble("GEM2_HV"));
-    GEM3_gain = 0.03 * exp(0.0209 * config.getDouble("GEM3_HV"));
+    double gain_factor = config.getDouble("GEM_gain_factor");
+    
+    GEM1_gain = gain_factor * exp(0.0209 * config.getDouble("GEM1_HV"));
+    GEM2_gain = gain_factor * exp(0.0209 * config.getDouble("GEM2_HV"));
+    GEM3_gain = gain_factor * exp(0.0209 * config.getDouble("GEM3_HV"));
 
     extraction_eff_GEM1 = 0.87319885 * exp(-0.002 * config.getDouble("GEM1_HV"));
     extraction_eff_GEM2 = 0.87319885 * exp(-0.002 * config.getDouble("GEM2_HV"));
@@ -549,6 +551,7 @@ void DigitizationRunner::processRootFiles() {
         vector<double> *py_particle = 0;
         vector<double> *pz_particle = 0;
         vector<double> *energyDep_hits = 0;
+        vector<double> *energyDep_hits_NRQF = 0;
         vector<double> *x_hits = 0;
         vector<double> *y_hits = 0;
         vector<double> *z_hits = 0;
@@ -567,6 +570,7 @@ void DigitizationRunner::processRootFiles() {
         }
             
         inputtree->SetBranchAddress("energyDep_hits", &energyDep_hits);
+        inputtree->SetBranchAddress("energyDep_hits_NRQF", &energyDep_hits_NRQF);
         inputtree->SetBranchAddress("x_hits", &x_hits);
         inputtree->SetBranchAddress("y_hits", &y_hits);
         inputtree->SetBranchAddress("z_hits", &z_hits);
@@ -936,7 +940,13 @@ void DigitizationRunner::processRootFiles() {
                 //}
                 
                 // Definition of energy hits
-                vector<double> energy_hits = (*energyDep_hits);
+                vector<double> energy_hits;
+                
+                if (NR_flag) {
+                    energy_hits = (*energyDep_hits_NRQF);
+                } else {
+                    energy_hits = (*energyDep_hits);
+                }
                     
                 // Add random Z to tracks
                 if (config.getDouble("randZ_range") != 0) {
