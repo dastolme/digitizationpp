@@ -538,7 +538,7 @@ void TrackProcessor::computeWithoutSaturation(const std::vector<double>& x_hits_
 
     vector<float> S2D_x;
     vector<float> S2D_y;
-    ph_smearing2D(x_hits_tr, y_hits_tr, z_hits_tr, energy_hits, S2D_x, S2D_y);
+    ph_smearing2D(x_hits_tr, y_hits_tr, z_hits_tr, energy_hits, S2D_x, S2D_y);      //Function still to be corrected
 
     // Vector to store all indices
     vector<size_t> indices(S2D_x.size());
@@ -585,13 +585,9 @@ void TrackProcessor::cloud_smearing3D(const vector<double>& x_hits_tr,
     //    cout<<nel[i]<<"\n";
     //}
 
-    vector<double> dz;
-    int opt_gem=config.getDouble("z_extra");
-    transform(z_hits_tr.begin(),z_hits_tr.end(),back_inserter(dz), [&] (double a) { return a+opt_gem;});
-
-    vector<double> sigma_x = compute_sigma(config.getDouble("diff_const_sigma0T"), config.getDouble("diff_coeff_T"), dz);
-    vector<double> sigma_y = compute_sigma(config.getDouble("diff_const_sigma0T"), config.getDouble("diff_coeff_T"), dz);
-    vector<double> sigma_z = compute_sigma(config.getDouble("diff_const_sigma0L"), config.getDouble("diff_coeff_L"), dz);
+    vector<double> sigma_x = compute_sigma(config.getDouble("diff_const_sigma0T"), config.getDouble("diff_coeff_T"), z_hits_tr);
+    vector<double> sigma_y = compute_sigma(config.getDouble("diff_const_sigma0T"), config.getDouble("diff_coeff_T"), z_hits_tr);
+    vector<double> sigma_z = compute_sigma(config.getDouble("diff_const_sigma0L"), config.getDouble("diff_coeff_L"), z_hits_tr);
 
     //Here this is the slowest part
     //Sequential
@@ -776,7 +772,7 @@ double TrackProcessor::Nph_saturation(int nel, double A, double beta) {
 }
 
 
-void TrackProcessor::ph_smearing2D( const vector<double>& x_hits_tr,
+void TrackProcessor::ph_smearing2D( const vector<double>& x_hits_tr,                        //Function still to be corrected
                                     const vector<double>& y_hits_tr,
                                     const vector<double>& z_hits_tr,
                                     const vector<double>& energy_hits,
@@ -794,11 +790,8 @@ void TrackProcessor::ph_smearing2D( const vector<double>& x_hits_tr,
         return nel_i * optA * GEM3_gain * omega * optphotons_per_el * optcounts_per_photon;
     });
 
-    vector<double> dz;
-    int opt_gem=config.getDouble("z_extra");
-    transform(z_hits_tr.begin(),z_hits_tr.end(),back_inserter(dz), [&] (double a) { return a+opt_gem;});
 
-    vector<double> sigma_xy = compute_sigma(config.getDouble("diff_const_sigma0T"), config.getDouble("diff_coeff_T"), dz);
+    vector<double> sigma_xy = compute_sigma(config.getDouble("diff_const_sigma0T"), config.getDouble("diff_coeff_T"), z_hits_tr);
 
     S2D_x = smear(x_hits_tr, sigma_xy, nph);
     S2D_y = smear(y_hits_tr, sigma_xy, nph);
