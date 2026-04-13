@@ -115,6 +115,10 @@ public:
                              std::vector<double>& y_hits_tr,
                              std::vector<double>& z_hits_tr);
 
+     int GetN_primaries_reaching_GEMs() {
+         return N_primaries_reaching_GEMs;
+     }
+
 private:
     ConfigManager& config; ///< Reference to configuration
 
@@ -247,6 +251,7 @@ private:
         {"z_max",         12}
     };
 
+    int N_primaries_reaching_GEMs;
 
 
 };

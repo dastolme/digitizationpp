@@ -75,7 +75,7 @@ DigitizationRunner::DigitizationRunner(const std::string& configFile_,
 void DigitizationRunner::run() {
     auto t0 = std::chrono::steady_clock::now();
 
-    setSeed();
+    setSeed(3);
     
     processRootFiles();
 
@@ -87,7 +87,7 @@ void DigitizationRunner::run() {
 void DigitizationRunner::runPedsOnly() {
     auto t0 = std::chrono::steady_clock::now();
 
-    setSeed();
+    setSeed(3);
 
     generateHistogramsFromDigi();
 
@@ -647,6 +647,7 @@ void DigitizationRunner::processRootFiles() {
             Float_t proj_track_2D = -1;
             Int_t nhits_og = -1;
             Int_t N_photons = -1;
+            Int_t N_primaries_reaching_GEMs = -1;
                 
             Int_t row_cut = -1;
             Int_t N_photons_cut = -1;
@@ -689,6 +690,7 @@ void DigitizationRunner::processRootFiles() {
             outtree->Branch("z_min", &z_min, "z_min/F");
             outtree->Branch("z_max", &z_max, "z_max/F");
             outtree->Branch("N_photons", &N_photons, "N_photons/I");
+            outtree->Branch("N_primaries_reaching_GEMs", &N_primaries_reaching_GEMs, "N_primaries_reaching_GEMs/I");
             outtree->Branch("px", &px, "px/F");
             outtree->Branch("py", &py, "py/F");
             outtree->Branch("pz", &pz, "pz/F");
@@ -791,6 +793,7 @@ void DigitizationRunner::processRootFiles() {
                 z_min           = -1;
                 z_max           = -1;
                 N_photons       =  0;
+                N_primaries_reaching_GEMs = -1;
                 x_min_cut       = -1;
                 x_max_cut       = -1;
                 y_min_cut       = -1;
@@ -1073,6 +1076,8 @@ void DigitizationRunner::processRootFiles() {
                 });
                 // DEBUG
                 cout<<"N_photons = "<<N_photons<<endl;
+
+                N_primaries_reaching_GEMs = processTrack.GetN_primaries_reaching_GEMs();
                 
                 // Compute always redpix, before possible track cut by exposure of sensor
                 FillRedpix(array2d_Nph, redpix_ix.get(), redpix_iy.get(), redpix_iz.get());
